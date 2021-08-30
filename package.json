@@ -1,0 +1,29 @@
+{
+  "name": "com.inc8877.addressables-master",
+  "version": "0.1.0",
+  "displayName": "AddressablesMaster",
+  "description": "Essential Addressables tool",
+  "homepage": "https://github.com/inc8877/AddressablesMaster#readme",
+  "keywords": [
+    "Addressables",
+    "Manage",
+    "Managing",
+    "Manager",
+    "Async",
+    "UniTask",
+    "Lifetime"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inc8877/AddressablesMaster.git"
+  },
+  "dependencies": {
+    "com.unity.addressables": "1.6.0"
+  },
+  "author": {
+    "name": "Volodymyr Bozhko",
+    "email": "inc8877@gmail.com",
+    "url": "https://github.com/inc8877"
+  },
+  "license" : "Apache-2.0"
+}
