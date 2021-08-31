@@ -42,7 +42,7 @@ namespace AddressablesMaster
             {
                 var primaryKey = location.PrimaryKey;
 
-                if (!GuardKey(primaryKey, out primaryKey))
+                if (!RuntimeKeyIsValid(primaryKey))
                     continue;
 
                 if (!_locations.ContainsKey(primaryKey))

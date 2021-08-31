@@ -26,15 +26,9 @@ namespace AddressablesMaster
                 OnInitializeCompleted(operation);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
 
@@ -104,15 +98,9 @@ namespace AddressablesMaster
                 OnLoadAssetCompleted(operation, key, false);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
 
@@ -149,15 +137,9 @@ namespace AddressablesMaster
                 OnLoadAssetCompleted(operation, key, true);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
 
@@ -201,15 +183,9 @@ namespace AddressablesMaster
                 OnLoadSceneCompleted(operation, key);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
 
@@ -245,15 +221,9 @@ namespace AddressablesMaster
                 OnLoadSceneCompleted(operation, key);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
 
@@ -365,15 +335,9 @@ namespace AddressablesMaster
                 OnInstantiateCompleted(operation, key, false);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
 
@@ -400,15 +364,9 @@ namespace AddressablesMaster
                 OnInstantiateCompleted(operation, key, true);
                 return operation;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
-
-                return default;
+                throw e;
             }
         }
     }

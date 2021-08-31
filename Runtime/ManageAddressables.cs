@@ -10,11 +10,6 @@ namespace AddressablesMaster
 {
     public static partial class ManageAddressables
     {
-        public enum ExceptionHandleType
-        {
-            Log, Throw, Suppress
-        }
-
         private static readonly Dictionary<string, List<IResourceLocation>> _locations;
         private static readonly List<IResourceLocation> _noLocation;
         private static readonly Dictionary<string, Object> _assets;
@@ -26,16 +21,12 @@ namespace AddressablesMaster
 
         public static IReadOnlyList<object> Keys => _keys;
 
-        public static ExceptionHandleType ExceptionHandle { get; set; }
-
         public static bool SuppressWarningLogs { get; set; }
 
         public static bool SuppressErrorLogs { get; set; }
 
         static ManageAddressables()
         {
-            ExceptionHandle = ExceptionHandleType.Log;
-
             _locations = new Dictionary<string, List<IResourceLocation>>();
             _noLocation = new List<IResourceLocation>(0);
             _assets = new Dictionary<string, Object>();
@@ -67,32 +58,22 @@ namespace AddressablesMaster
             list.Clear();
             _instanceListPool.Enqueue(list);
         }
+        
+        private static string ConvertRuntimeKey(IKeyEvaluator keyEvaluator) => keyEvaluator.RuntimeKey.ToString();
 
-        private static bool GuardKey(string key, out string result)
+        private static bool RuntimeKeyIsValid(string key, bool throwExceptionOnCase = false)
         {
-            result = key ?? string.Empty;
-
-            return !string.IsNullOrEmpty(result);
+            if (!string.IsNullOrEmpty(key)) return true;
+            if (throwExceptionOnCase) throw new InvalidKeyException(key);
+            return false;
         }
 
-        private static bool GuardKey(AssetReference reference, out string result)
+        private static bool RuntimeKeyIsValid(AssetReference reference, out string result,
+            bool throwExceptionOnCase = false)
         {
-            if (reference == null)
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new ArgumentNullException(nameof(reference));
+            if (throwExceptionOnCase) _ = reference ?? throw new ArgumentNullException(nameof(reference));
 
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new ArgumentNullException(nameof(reference)));
-
-                result = string.Empty;
-            }
-            else
-            {
-                result = reference.RuntimeKey.ToString();
-            }
-
-            return !string.IsNullOrEmpty(result);
+            return !string.IsNullOrEmpty(result = ConvertRuntimeKey(reference));
         }
 
         public static bool ContainsAsset(string key)
@@ -105,16 +86,7 @@ namespace AddressablesMaster
         {
             scene = default;
 
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return false;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (_scenes.TryGetValue(key, out var value))
             {
@@ -132,16 +104,7 @@ namespace AddressablesMaster
         {
             scene = default;
 
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return false;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             if (_scenes.TryGetValue(key, out var value))
             {
@@ -154,16 +117,7 @@ namespace AddressablesMaster
 
         public static IReadOnlyList<IResourceLocation> GetLocations(string key)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return _noLocation;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (!_locations.TryGetValue(key, out var list))
                 return _noLocation;
@@ -173,32 +127,14 @@ namespace AddressablesMaster
 
         public static T GetAsset<T>(string key) where T : Object
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return default;
-            }
+            RuntimeKeyIsValid(key, true);
 
             return GetAssetInternal<T>(key);
         }
 
         public static T GetAsset<T>(AssetReference reference) where T : Object
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return default;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             return GetAssetInternal<T>(key);
         }
@@ -226,16 +162,7 @@ namespace AddressablesMaster
         {
             asset = default;
 
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return false;
-            }
+            RuntimeKeyIsValid(key, true);
 
             return TryGetAssetInternal<T>(key, out asset);
         }
@@ -244,16 +171,7 @@ namespace AddressablesMaster
         {
             asset = default;
 
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return false;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             return TryGetAssetInternal<T>(key, out asset);
         }
@@ -284,16 +202,7 @@ namespace AddressablesMaster
 
         public static void ReleaseAsset(string key)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (!_assets.TryGetValue(key, out var asset))
                 return;
@@ -304,16 +213,7 @@ namespace AddressablesMaster
 
         public static void ReleaseAsset(AssetReference reference)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             if (!_assets.ContainsKey(key))
                 return;
@@ -324,16 +224,7 @@ namespace AddressablesMaster
 
         public static IReadOnlyList<GameObject> GetInstances(string key)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return _noInstanceList;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (_instances.TryGetValue(key, out var instanceList))
                 return instanceList;
@@ -343,16 +234,7 @@ namespace AddressablesMaster
 
         public static IReadOnlyList<GameObject> GetInstances(AssetReference reference)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return _noInstanceList;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             if (_instances.TryGetValue(key, out var instanceList))
                 return instanceList;
@@ -362,32 +244,14 @@ namespace AddressablesMaster
 
         public static void ReleaseInstances(string key)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             ReleaseInstanceInternal(key);
         }
 
         public static void ReleaseInstances(AssetReference reference)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             ReleaseInstanceInternal(key);
         }
@@ -409,32 +273,14 @@ namespace AddressablesMaster
 
         public static void ReleaseInstance(string key, GameObject instance)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             ReleaseInstanceInternal(key, instance);
         }
 
         public static void ReleaseInstance(AssetReference reference, GameObject instance)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key, true);
 
             ReleaseInstanceInternal(key, instance);
         }

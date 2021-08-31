@@ -18,13 +18,9 @@ namespace AddressablesMaster
                 var operation = Addressables.InitializeAsync();
                 operation.Completed += handle => OnInitializeCompleted(handle, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -43,13 +39,9 @@ namespace AddressablesMaster
                 var operation = Addressables.LoadResourceLocationsAsync(key);
                 operation.Completed += handle => OnLoadLocationsCompleted(handle, key, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -58,7 +50,7 @@ namespace AddressablesMaster
                                         Action<string> onFailed = null)
             where T : Object
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -84,13 +76,9 @@ namespace AddressablesMaster
                 var operation = Addressables.LoadAssetAsync<T>(key);
                 operation.Completed += handle => OnLoadAssetCompleted(handle, key, false, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -99,7 +87,7 @@ namespace AddressablesMaster
                                         Action<string> onFailed = null)
             where T : Object
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -126,13 +114,9 @@ namespace AddressablesMaster
                 var operation = reference.LoadAssetAsync<T>();
                 operation.Completed += handle => OnLoadAssetCompleted(handle, key, true, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -150,7 +134,7 @@ namespace AddressablesMaster
                                      bool activateOnLoad = true,
                                      int priority = 100)
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -171,13 +155,9 @@ namespace AddressablesMaster
                 var operation = Addressables.LoadSceneAsync(key, loadMode, activateOnLoad, priority);
                 operation.Completed += handle => OnLoadSceneCompleted(handle, key, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -188,7 +168,7 @@ namespace AddressablesMaster
                                      bool activateOnLoad = true,
                                      int priority = 100)
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -209,13 +189,9 @@ namespace AddressablesMaster
                 var operation = reference.LoadSceneAsync(loadMode, activateOnLoad, priority);
                 operation.Completed += handle => OnLoadSceneCompleted(handle, key, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -224,7 +200,7 @@ namespace AddressablesMaster
                                        Action<string> onFailed = null,
                                        bool autoReleaseHandle = true)
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -243,13 +219,9 @@ namespace AddressablesMaster
                 var operation = Addressables.UnloadSceneAsync(scene, autoReleaseHandle);
                 operation.Completed += handle => OnUnloadSceneCompleted(handle, key, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -257,7 +229,7 @@ namespace AddressablesMaster
                                        Action<string> onSucceeded = null,
                                        Action<string> onFailed = null)
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -276,13 +248,9 @@ namespace AddressablesMaster
                 var operation = reference.UnLoadScene();
                 operation.Completed += handle => OnUnloadSceneCompleted(handle, key, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -293,7 +261,7 @@ namespace AddressablesMaster
                                        bool inWorldSpace = false,
                                        bool trackHandle = true)
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -304,13 +272,9 @@ namespace AddressablesMaster
                 var operation = Addressables.InstantiateAsync(key, parent, inWorldSpace, trackHandle);
                 operation.Completed += handle => OnInstantiateCompleted(handle, key, false, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -320,7 +284,7 @@ namespace AddressablesMaster
                                        Transform parent = null,
                                        bool inWorldSpace = false)
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(key);
                 return;
@@ -331,13 +295,9 @@ namespace AddressablesMaster
                 var operation = reference.InstantiateAsync(parent, inWorldSpace);
                 operation.Completed += handle => OnInstantiateCompleted(handle, key, true, onSucceeded, onFailed);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
     }

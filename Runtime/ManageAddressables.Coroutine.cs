@@ -42,7 +42,7 @@ namespace AddressablesMaster
                                                         Action<string> onFailed = null)
             where T : Object
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
             }
@@ -74,7 +74,7 @@ namespace AddressablesMaster
                                                         Action<string> onFailed = null)
             where T : Object
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(key);
             }
@@ -116,7 +116,7 @@ namespace AddressablesMaster
                                                      Action<SceneInstance> onSucceeded = null,
                                                      Action<string> onFailed = null)
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
             }
@@ -148,7 +148,7 @@ namespace AddressablesMaster
                                                      Action<SceneInstance> onSucceeded = null,
                                                      Action<string> onFailed = null)
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(string.Empty);
             }
@@ -178,7 +178,7 @@ namespace AddressablesMaster
                                                        Action<string> onSucceeded = null,
                                                        Action<string> onFailed = null)
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
             }
@@ -204,7 +204,7 @@ namespace AddressablesMaster
                                                        Action<string> onSucceeded = null,
                                                        Action<string> onFailed = null)
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(string.Empty);
             }
@@ -233,7 +233,7 @@ namespace AddressablesMaster
                                                        Action<string, GameObject> onSucceeded = null,
                                                        Action<string> onFailed = null)
         {
-            if (!GuardKey(key, out key))
+            if (!RuntimeKeyIsValid(key))
             {
                 onFailed?.Invoke(key);
             }
@@ -252,7 +252,7 @@ namespace AddressablesMaster
                                                        Action<string, GameObject> onSucceeded = null,
                                                        Action<string> onFailed = null)
         {
-            if (!GuardKey(reference, out var key))
+            if (!RuntimeKeyIsValid(reference, out var key))
             {
                 onFailed?.Invoke(string.Empty);
             }

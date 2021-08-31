@@ -17,56 +17,30 @@ namespace AddressablesMaster
                 var operation = Addressables.InitializeAsync();
                 operation.Completed += handle => OnInitializeCompleted(handle);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
         public static void LoadLocations(object key)
         {
-            if (key == null)
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
-
+            _ = key ?? throw new InvalidKeyException(key);
+            
             try
             {
                 var operation = Addressables.LoadResourceLocationsAsync(key);
                 operation.Completed += handle => OnLoadLocationsCompleted(handle, key);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
         public static void LoadAsset<T>(string key) where T : Object
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (_assets.ContainsKey(key))
             {
@@ -84,28 +58,15 @@ namespace AddressablesMaster
                 var operation = Addressables.LoadAssetAsync<T>(key);
                 operation.Completed += handle => OnLoadAssetCompleted(handle, key, false);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
         public static void LoadAsset<T>(AssetReferenceT<T> reference) where T : Object
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key , true);
 
             if (_assets.ContainsKey(key))
             {
@@ -123,13 +84,9 @@ namespace AddressablesMaster
                 var operation = reference.LoadAssetAsync<T>();
                 operation.Completed += handle => OnLoadAssetCompleted(handle, key, true);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -138,16 +95,7 @@ namespace AddressablesMaster
                                      bool activateOnLoad = true,
                                      int priority = 100)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (_scenes.TryGetValue(key, out var scene))
             {
@@ -165,13 +113,9 @@ namespace AddressablesMaster
                 var operation = Addressables.LoadSceneAsync(key, loadMode, activateOnLoad, priority);
                 operation.Completed += handle => OnLoadSceneCompleted(handle, key);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -180,16 +124,7 @@ namespace AddressablesMaster
                                      bool activateOnLoad = true,
                                      int priority = 100)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key , true);
 
             if (_scenes.TryGetValue(key, out var scene))
             {
@@ -207,29 +142,16 @@ namespace AddressablesMaster
                 var operation = reference.LoadSceneAsync(loadMode, activateOnLoad, priority);
                 operation.Completed += handle => OnLoadSceneCompleted(handle, key);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
 
         public static void UnloadScene(string key, bool autoReleaseHandle = true)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             if (!_scenes.TryGetValue(key, out var scene))
             {
@@ -245,28 +167,15 @@ namespace AddressablesMaster
             {
                 Addressables.UnloadSceneAsync(scene, autoReleaseHandle);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
         public static void UnloadScene(AssetReference reference)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key , true);
 
             if (!_scenes.ContainsKey(key))
             {
@@ -282,13 +191,9 @@ namespace AddressablesMaster
             {
                 reference.UnLoadScene();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -297,29 +202,16 @@ namespace AddressablesMaster
                                        bool inWorldSpace = false,
                                        bool trackHandle = true)
         {
-            if (!GuardKey(key, out key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw new InvalidKeyException(key);
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(key, true);
 
             try
             {
                 var operation = Addressables.InstantiateAsync(key, parent, inWorldSpace, trackHandle);
                 operation.Completed += handle => OnInstantiateCompleted(handle, key, false);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
@@ -327,29 +219,16 @@ namespace AddressablesMaster
                                        Transform parent = null,
                                        bool inWorldSpace = false)
         {
-            if (!GuardKey(reference, out var key))
-            {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw Exceptions.InvalidReference;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(new InvalidKeyException(key));
-
-                return;
-            }
+            RuntimeKeyIsValid(reference, out var key , true);
 
             try
             {
                 var operation = reference.InstantiateAsync(parent, inWorldSpace);
                 operation.Completed += handle => OnInstantiateCompleted(handle, key, true);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                if (ExceptionHandle == ExceptionHandleType.Throw)
-                    throw ex;
-
-                if (ExceptionHandle == ExceptionHandleType.Log)
-                    Debug.LogException(ex);
+                throw e;
             }
         }
 
