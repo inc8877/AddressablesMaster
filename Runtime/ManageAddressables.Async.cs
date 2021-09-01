@@ -80,7 +80,7 @@ namespace AddressablesMaster
             }
         }
 
-        public static async Task<OperationResult<T>> LoadAssetAsync<T>(AssetReferenceT<T> reference) where T : Object
+        public static async Task<OperationResult<T>> LoadAssetAsync<T>(AssetReferenceT<T> reference, Action<T> onCompletion = null) where T : Object
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -101,6 +101,7 @@ namespace AddressablesMaster
                 await operation.Task;
 
                 OnLoadAssetCompleted(operation, key, true);
+                onCompletion?.Invoke(operation.Result);
                 return operation;
             }
             catch (Exception e)
@@ -248,7 +249,7 @@ namespace AddressablesMaster
         }
 
         public static async Task<OperationResult<GameObject>> InstantiateAsync(AssetReference reference,
-            Transform parent = null, bool inWorldSpace = false)
+            Transform parent = null, bool inWorldSpace = false, Action<GameObject> onCompletion = null)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -258,6 +259,7 @@ namespace AddressablesMaster
                 await operation.Task;
 
                 OnInstantiateCompleted(operation, key, true);
+                onCompletion?.Invoke(operation.Result);
                 return operation;
             }
             catch (Exception e)

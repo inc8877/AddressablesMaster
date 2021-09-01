@@ -59,17 +59,5 @@ namespace AddressablesMaster
 
         public static string CannotInstantiateReference(string key)
             => string.Format(_cannotInstantiateReference, key);
-
-        public static void TryAction(Action action)
-        {
-            try
-            {
-                action?.Invoke();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
     }
 }
