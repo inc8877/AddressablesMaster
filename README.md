@@ -99,7 +99,7 @@ ManageAddressables.InstantiateAsync(figureAssetRefGO, onCompletion: (go =>
 
 ### Lifetime managment
 
-When you load an addressable asset, you should release it as soon as you need it anymore, forgetting to do this can lead to many bad processes at runtime. Using the `Addressables Master` you can bind a release to the `GameoObject` that will do it for you automatically as soon as it is destroyed.
+When you load an addressable asset, you should release it as soon as you don't need it anymore, forgetting to do this can lead to many bad processes at runtime. Using the `Addressables Master` you can bind a release to the `GameoObject` that will do it for you automatically as soon as it is destroyed.
 
 Below are methods for working with assets with lifetime management:
 
