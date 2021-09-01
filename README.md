@@ -12,6 +12,9 @@ If you find this project useful, star it, I will be grateful!
 - [About](#about)
 - [Table of Contents](#table-of-contents)
 - [Roadmap](#roadmap)
+- [Installation](#installation)
+  - [Install via OpenUPM](#install-via-openupm)
+  - [Install via Git URL](#install-via-git-url)
 - [How to use](#how-to-use)
   - [Sync](#sync)
     - [Examples](#examples)
@@ -19,9 +22,6 @@ If you find this project useful, star it, I will be grateful!
     - [Examples](#examples-1)
   - [Lifetime managment](#lifetime-managment)
     - [Examples](#examples-2)
-- [Installation](#installation)
-  - [Install via OpenUPM](#install-via-openupm)
-  - [Install via Git URL](#install-via-git-url)
 - [Credits](#credits)
 
 ## Roadmap
@@ -31,6 +31,28 @@ If you find this project useful, star it, I will be grateful!
 | :rocket:  | Comment out all code     |
 | :rocket:  | Reduce memory allocation |
 | :pushpin: | Completely docs          |
+
+## Installation
+
+### Install via OpenUPM
+
+The package is available on the [openupm](https://openupm.com) registry. It's recommended to install it via [openupm-cli](https://github.com/openupm/openupm-cli).
+
+```bash
+openupm add com.inc8877.addressables-master
+```
+
+### Install via Git URL
+
+Open `Packages/manifest.json` with your favorite text editor. Add the following line to the dependencies block.
+
+```json
+{
+  "dependencies": {
+    "com.inc8877.addressables-master": "https://github.com/inc8877/AddressablesMaster.git",
+   }
+}
+```
 
 ## How to use
 
@@ -138,28 +160,6 @@ ManageAddressables.InstantiateAsyncWithAutoRelease(figureAssetRefGO).Result.tran
 var material = ManageAddressables.LoadAssetAsync(assetReferenceMaterial).Result.Value;
 GameObject tempGO = new GameObject("Temp");
 ManageAddressables.AddAutoReleaseAssetTrigger(assetReferenceMaterial, tempGO); // assetReferenceMaterial will be released as soon as tempGO is destroyed
-```
-
-## Installation
-
-### Install via OpenUPM
-
-The package is available on the [openupm](https://openupm.com) registry. It's recommended to install it via [openupm-cli](https://github.com/openupm/openupm-cli).
-
-```bash
-openupm add com.inc8877.addressables-master
-```
-
-### Install via Git URL
-
-Open `Packages/manifest.json` with your favorite text editor. Add the following line to the dependencies block.
-
-```json
-{
-  "dependencies": {
-    "com.inc8877.addressables-master": "https://github.com/inc8877/AddressablesMaster.git",
-   }
-}
 ```
 
 ## Credits
