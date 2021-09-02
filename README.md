@@ -72,7 +72,7 @@ ManageAddressables.[SOME_COMMAND];
 
 The `AddressablesMaster` implements the ability to manage assets in several ways, synchronously, asynchronously and coroutines.
 
-> Important! The use of an asynchronous model depends on the presence of `UniTask` in the project, if it does not exist in the project, then the `.NET` async system is used by default, if the project has `UniTask`, then it is used. When using asynchronous operations with or without `UniTask`, the code will remain the same.
+> Important! The use of an asynchronous model depends on the presence of `UniTask` in the project, if it does not exist in the project, then the `.NET` async system is used by default, if the project has `UniTask`, then it is used.
 
 No matter which management model you use, each has basic control operations with its own unique implementation. For example this is how initialization looks like on each model:
 
