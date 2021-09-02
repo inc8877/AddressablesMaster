@@ -167,7 +167,7 @@ public static async Task<GameObject> InstantiateAsyncWithAutoRelease(AssetRefere
 
 ```c#
 ManageAddressables.InstantiateSyncWithAutoRelease(figureAssetRefGO);
-ManageAddressables.InstantiateAsyncWithAutoRelease(figureAssetRefGO).Result.transform.position = Vector3.up;
+ManageAddressables.InstantiateAsyncWithAutoRelease(figureAssetRefGO, onCompletion: x => x.transform.position = Vector3.up);
 
 // or
 
