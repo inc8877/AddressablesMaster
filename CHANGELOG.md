@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.2
+
+### Fixed
+
+- UniTask compatibility
+
 ## v0.1.1
 
 ### Added
