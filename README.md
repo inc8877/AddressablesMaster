@@ -21,7 +21,9 @@ If you find this project useful, star it, I will be grateful!
   - [Async](#async)
     - [Examples](#examples-1)
   - [Lifetime managment](#lifetime-managment)
-    - [Examples](#examples-2)
+    - [Addressables Extensions](#addressables-extensions)
+      - [Examples](#examples-2)
+    - [Examples](#examples-3)
 - [Credits](#credits)
 
 ## Roadmap
@@ -123,18 +125,30 @@ ManageAddressables.InstantiateAsync(figureAssetRefGO, onCompletion: (go =>
 
 When you load an addressable asset, you should release it as soon as you don't need it anymore, forgetting to do this can lead to many bad processes at runtime. Using the `Addressables Master` you can bind a release to the `GameoObject` that will do it for you automatically as soon as it is destroyed.
 
-Below are methods for working with assets with lifetime management:
+#### Addressables Extensions
 
-`Base methods`
-
-> Important! Use base methods below only for assets that instanced via `Addressables Master`.
+If you need to use standard operations for working with addressables assets, then you can use the extensions.
 
 ```c#
-public static void AddAutoReleaseAssetTrigger(AssetReference assetReference, GameObject targetGO)
+public static async Task<AsyncOperationHandle<T>> AddAutoRelease<T>(this AsyncOperationHandle<T> operationHandle, GameObject targetGO)
 ```
 
 ```c#
-public static void AddAutoReleaseInstanceTrigger(AssetReference assetReference, GameObject targetGO)
+public static async Task<AsyncOperationHandle<T>> AddAutoRelease<T>(this AsyncOperationHandle<T> operationHandle, GameObject targetGO, Action onCompletion)
+```
+
+```c#
+public static async Task<AsyncOperationHandle<GameObject>> AddReleaseOnDestroy(this AsyncOperationHandle<GameObject> operationHandle)
+```
+
+##### Examples
+
+```c#
+GameObject go = new GameObject("Temp");
+
+assetReferenceMaterial.LoadAssetAsync().AddAutoRelease(go);
+
+figureAssetRefGO.InstantiateAsync().AddReleaseOnDestroy();
 ```
 
 `Sync`

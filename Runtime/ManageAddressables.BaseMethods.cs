@@ -44,11 +44,9 @@ namespace AddressablesMaster
 
             if (_assets.ContainsKey(key))
             {
-                if (!(_assets[key] is T))
-                {
-                    if (!SuppressWarningLogs)
-                        Debug.LogWarning(Exceptions.AssetKeyNotInstanceOf<T>(key));
-                }
+                if (_assets[key] is T) return;
+                if (!SuppressWarningLogs)
+                    Debug.LogWarning(Exceptions.AssetKeyNotInstanceOf<T>(key));
 
                 return;
             }
@@ -231,7 +229,19 @@ namespace AddressablesMaster
                 throw e;
             }
         }
-
+        
+        /// <summary>
+        /// USE ONLY IF TARGET LOADED VIA <see cref="ManageAddressables"/>.
+        /// Adds a trigger to the object and releases the target addressable asset when the game object is destroyed.
+        /// </summary>
+        /// <param name="key">Asset provided by a key that will be released upon game object destryed.</param>
+        /// <param name="targetGO">The object to which the trigger will be attached.</param>
+        public static void AddAutoReleaseAssetTrigger(string key, GameObject targetGO)
+        {
+            targetGO.AddComponent<ReleaseHandleOnDestroy>().OnDestroyEvent +=
+                () => ReleaseAsset(key);
+        }
+        
         /// <summary>
         /// USE ONLY IF TARGET LOADED VIA <see cref="ManageAddressables"/>.
         /// Adds a trigger to the object and releases the target addressable asset when the game object is destroyed.
@@ -244,6 +254,19 @@ namespace AddressablesMaster
                 () => ReleaseAsset(assetReference);
         }
         
+        /// <summary>
+        /// USE ONLY IF TARGET INSTANTIATED VIA <see cref="ManageAddressables"/>.
+        /// Adds a trigger to the object that is invoked when the object is destroyed
+        /// and releases the target asset instance.
+        /// </summary>
+        /// <param name="key">Asset provided by a key that will be released upon game object destryed.</param>
+        /// <param name="targetGO">The object to which the trigger will be attached.</param>
+        public static void AddAutoReleaseInstanceTrigger(string key, GameObject targetGO)
+        {
+            targetGO.AddComponent<ReleaseHandleOnDestroy>().OnDestroyEvent +=
+                () => ReleaseInstance(key, targetGO);
+        }
+
         /// <summary>
         /// USE ONLY IF TARGET INSTANTIATED VIA <see cref="ManageAddressables"/>.
         /// Adds a trigger to the object that is invoked when the object is destroyed

@@ -15,7 +15,7 @@ namespace AddressablesMaster
 {
     public static partial class ManageAddressables
     {
-        public static async Task<OperationResult<IResourceLocator>> InitializeAsync()
+        public static async Task<OperationResult<IResourceLocator>> InitializeAsync(Action<OperationResult<IResourceLocator>> onCompletion = null)
         {
             Clear();
 
@@ -25,7 +25,12 @@ namespace AddressablesMaster
                 await operation.Task;
 
                 OnInitializeCompleted(operation);
-                return operation;
+                
+                OperationResult<IResourceLocator> operationResult = operation;
+                
+                onCompletion?.Invoke(operationResult);
+                
+                return operationResult;
             }
             catch (Exception e)
             {
@@ -33,7 +38,7 @@ namespace AddressablesMaster
             }
         }
 
-        public static async Task<OperationResult<object>> LoadLocationsAsync(object key)
+        public static async Task<OperationResult<object>> LoadLocationsAsync(object key, Action<OperationResult<object>> onCompletion = null)
         {
             _ = key ?? throw new InvalidKeyException(key);
             
@@ -43,7 +48,12 @@ namespace AddressablesMaster
                 await operation.Task;
 
                 OnLoadLocationsCompleted(operation, key);
-                return new OperationResult<object>(operation.Status == AsyncOperationStatus.Succeeded, key);
+                
+                var operationResult = new OperationResult<object>(operation.Status == AsyncOperationStatus.Succeeded, key);
+                
+                onCompletion?.Invoke(operationResult);
+                
+                return operationResult;
             }
             catch (Exception e)
             {
@@ -51,7 +61,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static async Task<OperationResult<T>> LoadAssetAsync<T>(string key) where T : Object
+        public static async Task<OperationResult<T>> LoadAssetAsync<T>(string key, Action<T> onCompletion = null)
+            where T : Object
         {
             RuntimeKeyIsValid(key, true);
 
@@ -72,6 +83,7 @@ namespace AddressablesMaster
                 await operation.Task;
 
                 OnLoadAssetCompleted(operation, key, false);
+                onCompletion?.Invoke(operation.Result);
                 return operation;
             }
             catch (Exception e)
@@ -80,7 +92,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static async Task<OperationResult<T>> LoadAssetAsync<T>(AssetReferenceT<T> reference, Action<T> onCompletion = null) where T : Object
+        public static async Task<OperationResult<T>> LoadAssetAsync<T>(AssetReferenceT<T> reference,
+            Action<T> onCompletion = null) where T : Object
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -230,7 +243,7 @@ namespace AddressablesMaster
         }
         
         public static async Task<OperationResult<GameObject>> InstantiateAsync(string key, Transform parent = null, 
-            bool inWorldSpace = false, bool trackHandle = true)
+            bool inWorldSpace = false, bool trackHandle = true, Action<GameObject> onCompletion = null)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -240,6 +253,7 @@ namespace AddressablesMaster
                 await operation.Task;
 
                 OnInstantiateCompleted(operation, key, false);
+                onCompletion?.Invoke(operation.Result);
                 return operation;
             }
             catch (Exception e)
@@ -272,15 +286,37 @@ namespace AddressablesMaster
         /// Instantiates game object on the scene asynchronously and adds a trigger to the instance that
         /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
         /// </summary>
+        /// <returns>Instantiated GameObject on the scene.</returns>
+        public static async Task<GameObject> InstantiateAsyncWithAutoRelease(string key, Transform parent = null,
+            bool inWorldSpace = false, Action<GameObject> onCompletion = null)
+        {
+            var operationResult = LoadAssetAsync<GameObject>(key);
+            await operationResult;
+            
+            var instantiatedGO = Object.Instantiate(operationResult.Result.Value, parent, inWorldSpace);
+            AddAutoReleaseAssetTrigger(key, instantiatedGO);
+            
+            onCompletion?.Invoke(instantiatedGO);
+            
+            return instantiatedGO;
+        }
+        
+        /// <summary>
+        /// Instantiates game object on the scene asynchronously and adds a trigger to the instance that
+        /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
+        /// </summary>
         /// <returns>Instantiated game object on the scene.</returns>
         public static async Task<GameObject> InstantiateAsyncWithAutoRelease(
-            AssetReference assetReference, Transform parent = null, bool inWorldSpace = false)
+            AssetReference assetReference, Transform parent = null, bool inWorldSpace = false,
+            Action<GameObject> onCompletion = null)
         {
             var operationResult = LoadAssetAsync((AssetReferenceT<GameObject>)assetReference);
             await operationResult;
             
             var instantiatedGO = Object.Instantiate(operationResult.Result.Value, parent, inWorldSpace);
             AddAutoReleaseAssetTrigger(assetReference, instantiatedGO);
+            
+            onCompletion?.Invoke(instantiatedGO);
             
             return instantiatedGO;
         }
