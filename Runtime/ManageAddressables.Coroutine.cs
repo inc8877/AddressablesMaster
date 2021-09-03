@@ -10,8 +10,7 @@ namespace AddressablesMaster
 {
     public static partial class ManageAddressables
     {
-        public static IEnumerator InitializeCoroutine(Action onSucceeded = null,
-                                                      Action onFailed = null)
+        public static IEnumerator InitializeCoroutine(Action onSucceeded = null, Action onFailed = null)
         {
             Clear();
 
@@ -21,8 +20,8 @@ namespace AddressablesMaster
             OnInitializeCompleted(operation, onSucceeded, onFailed);
         }
 
-        public static IEnumerator LoadLocationsCoroutine(object key,
-            Action<object> onSucceeded = null, Action<object> onFailed = null)
+        public static IEnumerator LoadLocationsCoroutine(object key, Action<object> onSucceeded = null,
+            Action<object> onFailed = null)
         {
             if (key == null)
             {
@@ -37,10 +36,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static IEnumerator LoadAssetCoroutine<T>(string key,
-                                                        Action<string, T> onSucceeded = null,
-                                                        Action<string> onFailed = null)
-            where T : Object
+        public static IEnumerator LoadAssetCoroutine<T>(string key, Action<string, T> onSucceeded = null,
+            Action<string> onFailed = null) where T : Object
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -70,9 +67,7 @@ namespace AddressablesMaster
         }
 
         public static IEnumerator LoadAssetCoroutine<T>(AssetReferenceT<T> reference,
-                                                        Action<string, T> onSucceeded = null,
-                                                        Action<string> onFailed = null)
-            where T : Object
+            Action<string, T> onSucceeded = null, Action<string> onFailed = null) where T : Object
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {
@@ -109,12 +104,9 @@ namespace AddressablesMaster
             yield return operation;
         }
 
-        public static IEnumerator LoadSceneCoroutine(string key,
-                                                     LoadSceneMode loadMode = LoadSceneMode.Single,
-                                                     bool activateOnLoad = true,
-                                                     int priority = 100,
-                                                     Action<SceneInstance> onSucceeded = null,
-                                                     Action<string> onFailed = null)
+        public static IEnumerator LoadSceneCoroutine(string key, LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true, int priority = 100, Action<SceneInstance> onSucceeded = null,
+            Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -142,11 +134,8 @@ namespace AddressablesMaster
         }
 
         public static IEnumerator LoadSceneCoroutine(AssetReference reference,
-                                                     LoadSceneMode loadMode = LoadSceneMode.Single,
-                                                     bool activateOnLoad = true,
-                                                     int priority = 100,
-                                                     Action<SceneInstance> onSucceeded = null,
-                                                     Action<string> onFailed = null)
+            LoadSceneMode loadMode = LoadSceneMode.Single, bool activateOnLoad = true, int priority = 100,
+            Action<SceneInstance> onSucceeded = null, Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {
@@ -173,10 +162,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static IEnumerator UnloadSceneCoroutine(string key,
-                                                       bool autoReleaseHandle = true,
-                                                       Action<string> onSucceeded = null,
-                                                       Action<string> onFailed = null)
+        public static IEnumerator UnloadSceneCoroutine(string key, bool autoReleaseHandle = true,
+            Action<string> onSucceeded = null, Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -200,9 +187,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static IEnumerator UnloadSceneCoroutine(AssetReference reference,
-                                                       Action<string> onSucceeded = null,
-                                                       Action<string> onFailed = null)
+        public static IEnumerator UnloadSceneCoroutine(AssetReference reference, Action<string> onSucceeded = null,
+            Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {
@@ -226,12 +212,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static IEnumerator InstantiateCoroutine(string key,
-                                                       Transform parent = null,
-                                                       bool inWorldSpace = false,
-                                                       bool trackHandle = true,
-                                                       Action<string, GameObject> onSucceeded = null,
-                                                       Action<string> onFailed = null)
+        public static IEnumerator InstantiateCoroutine(string key, Transform parent = null, bool inWorldSpace = false,
+            bool trackHandle = true, Action<string, GameObject> onSucceeded = null, Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -246,11 +228,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static IEnumerator InstantiateCoroutine(AssetReference reference,
-                                                       Transform parent = null,
-                                                       bool inWorldSpace = false,
-                                                       Action<string, GameObject> onSucceeded = null,
-                                                       Action<string> onFailed = null)
+        public static IEnumerator InstantiateCoroutine(AssetReference reference, Transform parent = null,
+            bool inWorldSpace = false, Action<string, GameObject> onSucceeded = null, Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {
@@ -260,6 +239,37 @@ namespace AddressablesMaster
             {
                 var operation = reference.InstantiateAsync(parent, inWorldSpace);
                 yield return operation;
+
+                OnInstantiateCompleted(operation, key, true, onSucceeded, onFailed);
+            }
+        }
+
+        public static IEnumerator InstantiateWithAutoReleaseCoroutine(string key, Transform parent = null,
+            bool inWorldSpace = false, bool trackHandle = true, Action<string, GameObject> onSucceeded = null,
+            Action<string> onFailed = null)
+        {
+            if (!RuntimeKeyIsValid(key)) onFailed?.Invoke(key);
+            else
+            {
+                var operation = Addressables.InstantiateAsync(key, parent, inWorldSpace, trackHandle);
+                yield return operation;
+
+                AddAutoReleaseInstanceTrigger(key, operation.Result);
+
+                OnInstantiateCompleted(operation, key, false, onSucceeded, onFailed);
+            }
+        }
+
+        public static IEnumerator InstantiateWithAutoReleaseCoroutine(AssetReference reference, Transform parent = null,
+            bool inWorldSpace = false, Action<string, GameObject> onSucceeded = null, Action<string> onFailed = null)
+        {
+            if (!RuntimeKeyIsValid(reference, out var key)) onFailed?.Invoke(string.Empty);
+            else
+            {
+                var operation = reference.InstantiateAsync(parent, inWorldSpace);
+                yield return operation;
+
+                AddAutoReleaseInstanceTrigger(reference, operation.Result);
 
                 OnInstantiateCompleted(operation, key, true, onSucceeded, onFailed);
             }

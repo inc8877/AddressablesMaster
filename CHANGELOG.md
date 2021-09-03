@@ -1,5 +1,13 @@
 # Changelog
 
+# v1.0.0-preview
+
+### Added
+
+- Switching between an asynchronous model `.Net` / `UniTask`
+- Complete Coroutine base operations for addressables management
+- Complete UniTask base operations for addressables management
+
 ## v0.1.2
 
 ### Fixed

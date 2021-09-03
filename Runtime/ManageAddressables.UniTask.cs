@@ -1,4 +1,4 @@
-﻿#if ADDRESSABLES_UNITASK
+﻿#if ADDRESSABLES_UNITASK && USE_UNITASK
 
 using System;
 using UnityEngine.SceneManagement;
@@ -269,6 +269,44 @@ namespace AddressablesMaster
             {
                 throw e;
             }
+        }
+        
+        /// <summary>
+        /// Instantiates game object on the scene asynchronously and adds a trigger to the instance that
+        /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
+        /// </summary>
+        /// <returns>Instantiated game object on the scene.</returns>
+        public static async UniTask<GameObject> InstantiateAsyncWithAutoRelease(string key, Transform parent = null,
+            bool inWorldSpace = false, Action<GameObject> onCompletion = null)
+        {
+            var operationResult = await LoadAssetAsync<GameObject>(key);
+
+            var instantiatedGO = Object.Instantiate(operationResult.Value, parent, inWorldSpace);
+            
+            AddAutoReleaseAssetTrigger(key, instantiatedGO);
+            
+            onCompletion?.Invoke(instantiatedGO);
+            
+            return instantiatedGO;
+        }
+        
+        /// <summary>
+        /// Instantiates game object on the scene asynchronously and adds a trigger to the instance that
+        /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
+        /// </summary>
+        /// <returns>Instantiated game object on the scene.</returns>
+        public static async UniTask<GameObject> InstantiateAsyncWithAutoRelease(AssetReference assetReference,
+            Transform parent = null, bool inWorldSpace = false, Action<GameObject> onCompletion = null)
+        {
+            var operationResult = await LoadAssetAsync((AssetReferenceT<GameObject>)assetReference);
+
+            var instantiatedGO = Object.Instantiate(operationResult.Value, parent, inWorldSpace);
+            
+            AddAutoReleaseAssetTrigger(assetReference, instantiatedGO);
+            
+            onCompletion?.Invoke(instantiatedGO);
+            
+            return instantiatedGO;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿#if !ADDRESSABLES_UNITASK
+﻿#if !USE_UNITASK
 
 using System;
 using System.Runtime.CompilerServices;
@@ -121,14 +121,6 @@ namespace AddressablesMaster
             {
                 throw e;
             }
-        }
-
-        private static async Task ActivateAsync(SceneInstance scene, int priority)
-        {
-            var operation = scene.ActivateAsync();
-            operation.priority = priority;
-
-            await operation;
         }
 
         public static async Task<OperationResult<SceneInstance>> LoadSceneAsync(string key,
@@ -320,7 +312,14 @@ namespace AddressablesMaster
             
             return instantiatedGO;
         }
+        
+        private static async Task ActivateAsync(SceneInstance scene, int priority)
+        {
+            var operation = scene.ActivateAsync();
+            operation.priority = priority;
 
+            await operation;
+        }
     }
 
     internal static partial class AsyncOperationExtensions

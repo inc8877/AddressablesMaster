@@ -232,13 +232,6 @@ namespace AddressablesMaster
             }
         }
 
-        private static void ActivateSceneSync(in SceneInstance instance, int priority)
-        {
-            var operation = instance.ActivateAsync();
-            operation.priority = priority;
-            operation.WaitForCompletion();
-        }
-
         public static SceneInstance LoadSceneSync(string key,
                                                   LoadSceneMode loadMode = LoadSceneMode.Single,
                                                   bool activateOnLoad = true,
@@ -581,7 +574,21 @@ namespace AddressablesMaster
         
         /// <summary>
         /// Instantiates game object on the scene synchronously and adds a trigger to the instance that
-        /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
+        /// releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle"/> when the instance is destroyed.
+        /// </summary>
+        /// <returns>Instantiated game object on the scene.</returns>
+        public static GameObject InstantiateSyncWithAutoRelease(string key, Transform parent = null,
+            bool inWorldSpace = false)
+        {
+            var tempGO = Object.Instantiate(LoadAssetSync<GameObject>(key), parent, inWorldSpace);
+
+            AddAutoReleaseAssetTrigger(key, tempGO);
+            return tempGO;
+        }
+        
+        /// <summary>
+        /// Instantiates game object on the scene synchronously and adds a trigger to the instance that
+        /// releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle"/> when the instance is destroyed.
         /// </summary>
         /// <returns>Instantiated game object on the scene.</returns>
         public static GameObject InstantiateSyncWithAutoRelease(AssetReference assetReference,
@@ -591,7 +598,6 @@ namespace AddressablesMaster
                 inWorldSpace);
 
             AddAutoReleaseAssetTrigger(assetReference, tempGO);
-    
             return tempGO;
         }
 
@@ -613,6 +619,13 @@ namespace AddressablesMaster
             {
                 throw e;
             }
+        }
+        
+        private static void ActivateSceneSync(in SceneInstance instance, int priority)
+        {
+            var operation = instance.ActivateAsync();
+            operation.priority = priority;
+            operation.WaitForCompletion();
         }
     }
 

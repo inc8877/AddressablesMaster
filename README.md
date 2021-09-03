@@ -16,14 +16,12 @@ If you find this project useful, star it, I will be grateful!
   - [Install via OpenUPM](#install-via-openupm)
   - [Install via Git URL](#install-via-git-url)
 - [How to use](#how-to-use)
-  - [Sync](#sync)
-    - [Examples](#examples)
-  - [Async](#async)
-    - [Examples](#examples-1)
+  - [Intro](#intro)
+  - [Short examples](#short-examples)
   - [Lifetime managment](#lifetime-managment)
     - [Addressables Extensions](#addressables-extensions)
-      - [Examples](#examples-2)
-    - [Examples](#examples-3)
+    - [Management operations](#management-operations)
+    - [Short examples](#short-examples-1)
 - [Credits](#credits)
 
 ## Roadmap
@@ -58,7 +56,9 @@ Open `Packages/manifest.json` with your favorite text editor. Add the following 
 
 ## How to use
 
-Plugin nampespace first.
+### Intro
+
+Plug in namespace first.
 
 ```c#
 using AddressablesMaster;
@@ -70,24 +70,30 @@ All basic features for asset management are available along the following path:
 ManageAddressables.[SOME_COMMAND];
 ```
 
-The `AddressablesMaster` implements the ability to manage assets in several ways, synchronously, asynchronously and coroutines.
+Below is a list of operations that are available in each control model:
 
-> Important! The use of an asynchronous model depends on the presence of `UniTask` in the project, if it does not exist in the project, then the `.NET` async system is used by default, if the project has `UniTask`, then it is used.
+- Initialize
+- LoadLocations
+- LoadAsset
+- LoadScene
+- UnloadScene
+- Instantiate
+- InstantiateWithAutoRelease
 
-No matter which management model you use, each has basic control operations with its own unique implementation. For example this is how initialization looks like on each model:
+If you are using the `UniTask` in a project and want to use it in an asynchronous control model, then connect it by following the path `Tools > Addressables Master > UniTask > On`.
+`.NET` asynchronous operating model is used by default.
+> Carefully! If you switch the asynchronous model, all existing code will be invalidated as each model has its own implementation.
+
+### Short examples
+
+For examples we will take some data:
 
 ```c#
-ManageAddressables.InitializeSync();
-ManageAddressables.InitializeAsync();
-StartCoroutine(ManageAddressables.InitializeCoroutine());
-```
-
-For all examples we will use the following data:
-
-```c#
-public string keyOfAddressablesFigure;
-public AssetReferenceGameObject figureAssetRefGO;
-public AssetReferenceMaterial assetReferenceMaterial;
+// Some data for examples
+public string startupSound;
+public AssetReferenceGameObject props;
+public AssetReferenceMaterial material;
+public AudioSource audioSource;
 
 [Serializable]
 public class AssetReferenceMaterial : AssetReferenceT<Material>
@@ -96,34 +102,44 @@ public class AssetReferenceMaterial : AssetReferenceT<Material>
 }
 ```
 
-### Sync
-
-When using a synchronous operation script, in response to a command output that has a return value, you will receive a value of the type specified in the signature of the operation being called, this seems obvious, but for example, by calling the same operation using the asynchronous model, you will get a custom type similar to an `AsyncOperationHandle`.
-
-#### Examples
+`Sync`
 
 ```c#
-ManageAddressables.InstantiateSync(keyOfAddressablesFigure).transform.position = Vector3.back;
-ManageAddressables.InstantiateSync(figureAssetRefGO);
-Debug.Log(ManageAddressables.LoadAssetSync(assetReferenceMaterial).color.a);
+audioSource.PlayOneShot(ManageAddressables.LoadAssetSync<AudioClip>(startupSound));
+            
+var _material = ManageAddressables.LoadAssetSync(material);
+            
+ManageAddressables.InstantiateSync(props).GetComponent<MeshRenderer>().material = _material;
 ```
 
-### Async
-
-When using a synchronous operation script, in response to a command output that has a return value, you will get a `Task` that contains as a result a custom class named `OperationResult` with several fields, `Succeeded` and `Value`. You can process this data in accordance with the logic of your project.
-
-#### Examples
+`Async .NET`
 
 ```c#
-ManageAddressables.InstantiateAsync(figureAssetRefGO, onCompletion: (go =>
-{
-  ManageAddressables.LoadAssetAsync(assetReferenceMaterial, material => go.GetComponent<MeshRenderer>().material = material);
-}));
+ManageAddressables.LoadAssetAsync(material, _material => ManageAddressables.InstantiateAsync(props,
+                onCompletion: _go => _go.GetComponent<MeshRenderer>().material = _material));
+```
+
+`Async UniTask`
+
+```c#
+ManageAddressables.LoadAssetAsync(material).ContinueWith(result =>
+            ManageAddressables.InstantiateAsync(props).ContinueWith(x =>
+            x.Value.GetComponent<MeshRenderer>().material = result));
+```
+
+`Coroutine`
+
+```c#
+StartCoroutine(ManageAddressables.LoadAssetCoroutine(material, (key1, result1) =>
+                StartCoroutine(ManageAddressables.InstantiateCoroutine(props,
+                    onSucceeded: (key2, result2) => result2.GetComponent<MeshRenderer>().material = result1))));
 ```
 
 ### Lifetime managment
 
 When you load an addressable asset, you should release it as soon as you don't need it anymore, forgetting to do this can lead to many bad processes at runtime. Using the `Addressables Master` you can bind a release to the `GameoObject` that will do it for you automatically as soon as it is destroyed.
+
+The `Addressables Master` has two ways to manage the release of objects, the first is to use [methods of extending the basic operations](#addressables-extensions) of the Addressables, the second is to use separate methods of life management.
 
 #### Addressables Extensions
 
@@ -141,7 +157,7 @@ public static async Task<AsyncOperationHandle<T>> AddAutoRelease<T>(this AsyncOp
 public static async Task<AsyncOperationHandle<GameObject>> AddReleaseOnDestroy(this AsyncOperationHandle<GameObject> operationHandle)
 ```
 
-##### Examples
+Examples:
 
 ```c#
 GameObject go = new GameObject("Temp");
@@ -151,19 +167,75 @@ assetReferenceMaterial.LoadAssetAsync().AddAutoRelease(go);
 figureAssetRefGO.InstantiateAsync().AddReleaseOnDestroy();
 ```
 
+#### Management operations
+
 `Sync`
 
 ```c#
-public static GameObject InstantiateSyncWithAutoRelease(AssetReference assetReference, Transform parent = null, bool inWorldSpace = false)
+public static GameObject InstantiateSyncWithAutoRelease(string key, Transform parent = null,
+            bool inWorldSpace = false)
 ```
 
-`Async`
+```c#
+public static GameObject InstantiateSyncWithAutoRelease(AssetReference assetReference, Transform parent = null,
+            bool inWorldSpace = false)
+```
+
+`Async .NET`
+
+```c#
+public static async Task<GameObject> InstantiateAsyncWithAutoRelease(string key, Transform parent = null,
+            bool inWorldSpace = false, Action<GameObject> onCompletion = null)
+```
 
 ```c#
 public static async Task<GameObject> InstantiateAsyncWithAutoRelease(AssetReference assetReference, Transform parent = null, bool inWorldSpace = false)
 ```
 
-#### Examples
+`Async UniTask`
+
+```c#
+public static async UniTask<GameObject> InstantiateAsyncWithAutoRelease(string key, Transform parent = null,
+            bool inWorldSpace = false, Action<GameObject> onCompletion = null)
+```
+
+```c#
+public static async UniTask<GameObject> InstantiateAsyncWithAutoRelease(AssetReference assetReference,
+            Transform parent = null, bool inWorldSpace = false, Action<GameObject> onCompletion = null)
+```
+
+`Coroutine`
+
+```c#
+public static IEnumerator InstantiateWithAutoReleaseCoroutine(string key, Transform parent = null,
+            bool inWorldSpace = false, bool trackHandle = true, Action<string, GameObject> onSucceeded = null,
+            Action<string> onFailed = null)
+```
+
+```c#
+public static IEnumerator InstantiateWithAutoReleaseCoroutine(AssetReference reference, Transform parent = null,
+            bool inWorldSpace = false, Action<string, GameObject> onSucceeded = null, Action<string> onFailed = null)
+```
+
+`Methods not tied to a specific management model`
+
+```c#
+public static void AddAutoReleaseAssetTrigger(string key, GameObject targetGO)
+```
+
+```c#
+public static void AddAutoReleaseAssetTrigger(AssetReference assetReference, GameObject targetGO)
+```
+
+```c#
+public static void AddAutoReleaseInstanceTrigger(string key, GameObject targetGO)
+```
+
+```c#
+public static void AddAutoReleaseInstanceTrigger(AssetReference assetReference, GameObject targetGO)
+```
+
+#### Short examples
 
 ```c#
 ManageAddressables.InstantiateSyncWithAutoRelease(figureAssetRefGO);
