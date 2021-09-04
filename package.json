@@ -1,6 +1,6 @@
 {
   "name": "com.inc8877.addressables-master",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "AddressablesMaster",
   "description": "Use Sync, Async(.NET / UniTask), Coroutine, Lifetime management tools for addressables assets with caching support",
   "homepage": "https://github.com/inc8877/AddressablesMaster#readme",

@@ -1,5 +1,11 @@
 # Changelog
 
+# v1.0.1
+
+### Fixed
+
+- Missed `partial` in `AsyncOperationExtensions` signature
+
 # v1.0.0
 
 ### Fixed
