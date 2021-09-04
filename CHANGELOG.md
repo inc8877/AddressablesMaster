@@ -1,5 +1,12 @@
 # Changelog
 
+# v1.0.0
+
+### Fixed
+
+- Access to the button for switching the asynchronous model when the UniTask is not in the project
+- I~~~~ncorrect code style
+
 # v1.0.0-preview
 
 ### Added

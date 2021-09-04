@@ -9,38 +9,42 @@ namespace AddressablesMaster
 
         public OperationResult(bool succeeded, T value)
         {
-            this.Succeeded = succeeded;
-            this.Value = value;
+            Succeeded = succeeded;
+            Value = value;
         }
 
         public OperationResult(bool succeeded, in T value)
         {
-            this.Succeeded = succeeded;
-            this.Value = value;
+            Succeeded = succeeded;
+            Value = value;
         }
 
         public OperationResult(AsyncOperationStatus status, T value)
         {
-            this.Succeeded = status == AsyncOperationStatus.Succeeded;
-            this.Value = value;
+            Succeeded = status == AsyncOperationStatus.Succeeded;
+            Value = value;
         }
 
         public OperationResult(AsyncOperationStatus status, in T value)
         {
-            this.Succeeded = status == AsyncOperationStatus.Succeeded;
-            this.Value = value;
+            Succeeded = status == AsyncOperationStatus.Succeeded;
+            Value = value;
         }
 
         public void Deconstruct(out bool succeeded, out T value)
         {
-            succeeded = this.Succeeded;
-            value = this.Value;
+            succeeded = Succeeded;
+            value = Value;
         }
 
         public static implicit operator OperationResult<T>(in AsyncOperationHandle<T> handle)
-            => new OperationResult<T>(handle.Status, handle.Result);
+        {
+            return new OperationResult<T>(handle.Status, handle.Result);
+        }
 
         public static implicit operator T(in OperationResult<T> result)
-            => result.Value;
+        {
+            return result.Value;
+        }
     }
 }

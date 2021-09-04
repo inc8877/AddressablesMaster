@@ -1,8 +1,8 @@
 {
   "name": "com.inc8877.addressables-master",
-  "version": "1.0.0-preview",
+  "version": "1.0.0",
   "displayName": "AddressablesMaster",
-  "description": "Essential Addressables tool",
+  "description": "Use Sync, Async(.NET / UniTask), Coroutine, Lifetime management tools for addressables assets with caching support",
   "homepage": "https://github.com/inc8877/AddressablesMaster#readme",
   "keywords": [
     "Addressables",
@@ -25,5 +25,5 @@
     "email": "inc8877@gmail.com",
     "url": "https://github.com/inc8877"
   },
-  "license" : "Apache-2.0"
+  "license": "Apache-2.0"
 }

@@ -116,10 +116,7 @@ namespace AddressablesMaster
             {
                 if (_scenes.TryGetValue(key, out var scene))
                 {
-                    if (activateOnLoad)
-                    {
-                        yield return ActivateSceneCoroutine(scene, priority);
-                    }
+                    if (activateOnLoad) yield return ActivateSceneCoroutine(scene, priority);
 
                     onSucceeded?.Invoke(scene);
                 }
@@ -145,10 +142,7 @@ namespace AddressablesMaster
             {
                 if (_scenes.TryGetValue(key, out var scene))
                 {
-                    if (activateOnLoad)
-                    {
-                        yield return ActivateSceneCoroutine(scene, priority);
-                    }
+                    if (activateOnLoad) yield return ActivateSceneCoroutine(scene, priority);
 
                     onSucceeded?.Invoke(scene);
                 }
@@ -248,7 +242,10 @@ namespace AddressablesMaster
             bool inWorldSpace = false, bool trackHandle = true, Action<string, GameObject> onSucceeded = null,
             Action<string> onFailed = null)
         {
-            if (!RuntimeKeyIsValid(key)) onFailed?.Invoke(key);
+            if (!RuntimeKeyIsValid(key))
+            {
+                onFailed?.Invoke(key);
+            }
             else
             {
                 var operation = Addressables.InstantiateAsync(key, parent, inWorldSpace, trackHandle);
@@ -263,7 +260,10 @@ namespace AddressablesMaster
         public static IEnumerator InstantiateWithAutoReleaseCoroutine(AssetReference reference, Transform parent = null,
             bool inWorldSpace = false, Action<string, GameObject> onSucceeded = null, Action<string> onFailed = null)
         {
-            if (!RuntimeKeyIsValid(reference, out var key)) onFailed?.Invoke(string.Empty);
+            if (!RuntimeKeyIsValid(reference, out var key))
+            {
+                onFailed?.Invoke(string.Empty);
+            }
             else
             {
                 var operation = reference.InstantiateAsync(parent, inWorldSpace);

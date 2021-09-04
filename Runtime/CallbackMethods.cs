@@ -25,8 +25,8 @@ namespace AddressablesMaster
         }
 
         public static void LoadLocations(object key,
-                                         Action<object> onSucceeded,
-                                         Action<object> onFailed = null)
+            Action<object> onSucceeded,
+            Action<object> onFailed = null)
         {
             if (key == null)
             {
@@ -46,8 +46,8 @@ namespace AddressablesMaster
         }
 
         public static void LoadAsset<T>(string key,
-                                        Action<string, T> onSucceeded,
-                                        Action<string> onFailed = null)
+            Action<string, T> onSucceeded,
+            Action<string> onFailed = null)
             where T : Object
         {
             if (!RuntimeKeyIsValid(key))
@@ -83,8 +83,8 @@ namespace AddressablesMaster
         }
 
         public static void LoadAsset<T>(AssetReferenceT<T> reference,
-                                        Action<string, T> onSucceeded,
-                                        Action<string> onFailed = null)
+            Action<string, T> onSucceeded,
+            Action<string> onFailed = null)
             where T : Object
         {
             if (!RuntimeKeyIsValid(reference, out var key))
@@ -128,11 +128,11 @@ namespace AddressablesMaster
         }
 
         public static void LoadScene(string key,
-                                     Action<SceneInstance> onSucceeded,
-                                     Action<string> onFailed = null,
-                                     LoadSceneMode loadMode = LoadSceneMode.Single,
-                                     bool activateOnLoad = true,
-                                     int priority = 100)
+            Action<SceneInstance> onSucceeded,
+            Action<string> onFailed = null,
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -162,11 +162,11 @@ namespace AddressablesMaster
         }
 
         public static void LoadScene(AssetReference reference,
-                                     Action<SceneInstance> onSucceeded,
-                                     Action<string> onFailed = null,
-                                     LoadSceneMode loadMode = LoadSceneMode.Single,
-                                     bool activateOnLoad = true,
-                                     int priority = 100)
+            Action<SceneInstance> onSucceeded,
+            Action<string> onFailed = null,
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {
@@ -196,9 +196,9 @@ namespace AddressablesMaster
         }
 
         public static void UnloadScene(string key,
-                                       Action<string> onSucceeded = null,
-                                       Action<string> onFailed = null,
-                                       bool autoReleaseHandle = true)
+            Action<string> onSucceeded = null,
+            Action<string> onFailed = null,
+            bool autoReleaseHandle = true)
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -226,8 +226,8 @@ namespace AddressablesMaster
         }
 
         public static void UnloadScene(AssetReference reference,
-                                       Action<string> onSucceeded = null,
-                                       Action<string> onFailed = null)
+            Action<string> onSucceeded = null,
+            Action<string> onFailed = null)
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {
@@ -255,11 +255,11 @@ namespace AddressablesMaster
         }
 
         public static void Instantiate(string key,
-                                       Action<string, GameObject> onSucceeded,
-                                       Action<string> onFailed = null,
-                                       Transform parent = null,
-                                       bool inWorldSpace = false,
-                                       bool trackHandle = true)
+            Action<string, GameObject> onSucceeded,
+            Action<string> onFailed = null,
+            Transform parent = null,
+            bool inWorldSpace = false,
+            bool trackHandle = true)
         {
             if (!RuntimeKeyIsValid(key))
             {
@@ -279,10 +279,10 @@ namespace AddressablesMaster
         }
 
         public static void Instantiate(AssetReference reference,
-                                       Action<string, GameObject> onSucceeded,
-                                       Action<string> onFailed = null,
-                                       Transform parent = null,
-                                       bool inWorldSpace = false)
+            Action<string, GameObject> onSucceeded,
+            Action<string> onFailed = null,
+            Transform parent = null,
+            bool inWorldSpace = false)
         {
             if (!RuntimeKeyIsValid(reference, out var key))
             {

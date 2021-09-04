@@ -4,7 +4,9 @@
 
 Manage Addressables using Sync, Async(Built-in/UniTask), Coroutine, Lifetime Managing systems.
 
-This solution will provide you with simple and convenient operations for Addressables assets management. You have a synchronous, asynchronous, coroutine use-case at your disposal. Also, if you are concerned about preventing memory leaks, you can use `lifetime` managment tools to release an unused asset in time.
+This solution will provide you with simple and convenient operations for Addressables assets management with results caching.
+You have a synchronous, asynchronous, coroutine use-case at your disposal.
+Also, if you are concerned about preventing memory leaks, you can use `lifetime` management tools to release an unused asset in time.
 
 If you find this project useful, star it, I will be grateful!
 

@@ -1,13 +1,13 @@
 ﻿#if ADDRESSABLES_UNITASK && USE_UNITASK
 
 using System;
-using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
-using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace AddressablesMaster
@@ -119,15 +119,15 @@ namespace AddressablesMaster
         }
 
         public static async UniTask<OperationResult<SceneInstance>> LoadSceneAsync(string key,
-                                                                                   LoadSceneMode loadMode = LoadSceneMode.Single,
-                                                                                   bool activateOnLoad = true,
-                                                                                   int priority = 100)
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             RuntimeKeyIsValid(key, true);
 
             if (_scenes.TryGetValue(key, out var scene))
             {
-                if (activateOnLoad )
+                if (activateOnLoad)
                     await ActivateSceneAsync(scene, priority);
 
                 return new OperationResult<SceneInstance>(true, in scene);
@@ -135,7 +135,7 @@ namespace AddressablesMaster
 
             try
             {
-                var operation = Addressables.LoadSceneAsync(key, loadMode, activateOnLoad , priority);
+                var operation = Addressables.LoadSceneAsync(key, loadMode, activateOnLoad, priority);
                 await operation;
 
                 OnLoadSceneCompleted(operation, key);
@@ -148,9 +148,9 @@ namespace AddressablesMaster
         }
 
         public static async UniTask<OperationResult<SceneInstance>> LoadSceneAsync(AssetReference reference,
-                                                                                   LoadSceneMode loadMode = LoadSceneMode.Single,
-                                                                                   bool activateOnLoad = true,
-                                                                                   int priority = 100)
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -176,7 +176,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static async UniTask<OperationResult<SceneInstance>> UnloadSceneAsync(string key, bool autoReleaseHandle = true)
+        public static async UniTask<OperationResult<SceneInstance>> UnloadSceneAsync(string key,
+            bool autoReleaseHandle = true)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -231,9 +232,9 @@ namespace AddressablesMaster
         }
 
         public static async UniTask<OperationResult<GameObject>> InstantiateAsync(string key,
-                                                                                  Transform parent = null,
-                                                                                  bool inWorldSpace = false,
-                                                                                  bool trackHandle = true)
+            Transform parent = null,
+            bool inWorldSpace = false,
+            bool trackHandle = true)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -252,8 +253,8 @@ namespace AddressablesMaster
         }
 
         public static async UniTask<OperationResult<GameObject>> InstantiateAsync(AssetReference reference,
-                                                                                  Transform parent = null,
-                                                                                  bool inWorldSpace = false)
+            Transform parent = null,
+            bool inWorldSpace = false)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -270,10 +271,10 @@ namespace AddressablesMaster
                 throw e;
             }
         }
-        
+
         /// <summary>
-        /// Instantiates game object on the scene asynchronously and adds a trigger to the instance that
-        /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
+        ///     Instantiates game object on the scene asynchronously and adds a trigger to the instance that
+        ///     releases <see cref="AsyncOperationHandle" /> when the instance is destroyed.
         /// </summary>
         /// <returns>Instantiated game object on the scene.</returns>
         public static async UniTask<GameObject> InstantiateAsyncWithAutoRelease(string key, Transform parent = null,
@@ -282,17 +283,17 @@ namespace AddressablesMaster
             var operationResult = await LoadAssetAsync<GameObject>(key);
 
             var instantiatedGO = Object.Instantiate(operationResult.Value, parent, inWorldSpace);
-            
+
             AddAutoReleaseAssetTrigger(key, instantiatedGO);
-            
+
             onCompletion?.Invoke(instantiatedGO);
-            
+
             return instantiatedGO;
         }
-        
+
         /// <summary>
-        /// Instantiates game object on the scene asynchronously and adds a trigger to the instance that
-        /// releases <see cref="AsyncOperationHandle"/> when the instance is destroyed.
+        ///     Instantiates game object on the scene asynchronously and adds a trigger to the instance that
+        ///     releases <see cref="AsyncOperationHandle" /> when the instance is destroyed.
         /// </summary>
         /// <returns>Instantiated game object on the scene.</returns>
         public static async UniTask<GameObject> InstantiateAsyncWithAutoRelease(AssetReference assetReference,
@@ -301,11 +302,11 @@ namespace AddressablesMaster
             var operationResult = await LoadAssetAsync((AssetReferenceT<GameObject>)assetReference);
 
             var instantiatedGO = Object.Instantiate(operationResult.Value, parent, inWorldSpace);
-            
+
             AddAutoReleaseAssetTrigger(assetReference, instantiatedGO);
-            
+
             onCompletion?.Invoke(instantiatedGO);
-            
+
             return instantiatedGO;
         }
     }

@@ -19,12 +19,6 @@ namespace AddressablesMaster
         private static readonly List<GameObject> _noInstanceList;
         private static readonly List<object> _keys;
 
-        public static IReadOnlyList<object> Keys => _keys;
-
-        public static bool SuppressWarningLogs { get; set; }
-
-        public static bool SuppressErrorLogs { get; set; }
-
         static ManageAddressables()
         {
             _locations = new Dictionary<string, List<IResourceLocation>>();
@@ -37,50 +31,21 @@ namespace AddressablesMaster
             _keys = new List<object>();
         }
 
-        private static void Clear()
-        {
-            _keys.Clear();
-            _locations.Clear();
-            _assets.Clear();
-            _scenes.Clear();
-        }
+        public static IReadOnlyList<object> Keys => _keys;
 
-        private static List<GameObject> GetInstanceList()
-        {
-            if (_instanceListPool.Count > 0)
-                return _instanceListPool.Dequeue();
+        public static bool SuppressWarningLogs { get; set; }
 
-            return new List<GameObject>();
-        }
-
-        private static void PoolInstanceList(List<GameObject> list)
-        {
-            list.Clear();
-            _instanceListPool.Enqueue(list);
-        }
-        
-        private static string ConvertRuntimeKey(IKeyEvaluator keyEvaluator) => keyEvaluator.RuntimeKey.ToString();
-
-        private static bool RuntimeKeyIsValid(string key, bool throwExceptionOnCase = false)
-        {
-            if (!string.IsNullOrEmpty(key)) return true;
-            if (throwExceptionOnCase) throw new InvalidKeyException(key);
-            return false;
-        }
-
-        private static bool RuntimeKeyIsValid(AssetReference reference, out string result,
-            bool throwExceptionOnCase = false)
-        {
-            if (throwExceptionOnCase) _ = reference ?? throw new ArgumentNullException(nameof(reference));
-
-            return !string.IsNullOrEmpty(result = ConvertRuntimeKey(reference));
-        }
+        public static bool SuppressErrorLogs { get; set; }
 
         public static bool ContainsAsset(string key)
-            => _assets.ContainsKey(key) && _assets[key];
+        {
+            return _assets.ContainsKey(key) && _assets[key];
+        }
 
         public static bool ContainsKey(object key)
-            => _keys.Contains(key);
+        {
+            return _keys.Contains(key);
+        }
 
         public static bool TryGetScene(string key, out SceneInstance scene)
         {
@@ -96,21 +61,6 @@ namespace AddressablesMaster
 
             if (!SuppressWarningLogs)
                 Debug.LogWarning($"No scene with key={key} has been loaded through {nameof(ManageAddressables)}.");
-
-            return false;
-        }
-
-        public static bool TryGetScene(AssetReference reference, out SceneInstance scene)
-        {
-            scene = default;
-
-            RuntimeKeyIsValid(reference, out var key, true);
-
-            if (_scenes.TryGetValue(key, out var value))
-            {
-                scene = value;
-                return true;
-            }
 
             return false;
         }
@@ -139,6 +89,81 @@ namespace AddressablesMaster
             return GetAssetInternal<T>(key);
         }
 
+        public static bool TryGetScene(AssetReference reference, out SceneInstance scene)
+        {
+            scene = default;
+
+            RuntimeKeyIsValid(reference, out var key, true);
+
+            if (_scenes.TryGetValue(key, out var value))
+            {
+                scene = value;
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool TryGetAsset<T>(string key, out T asset) where T : Object
+        {
+            asset = default;
+
+            RuntimeKeyIsValid(key, true);
+
+            return TryGetAssetInternal(key, out asset);
+        }
+
+        public static bool TryGetAsset<T>(AssetReference reference, out T asset) where T : Object
+        {
+            asset = default;
+
+            RuntimeKeyIsValid(reference, out var key, true);
+
+            return TryGetAssetInternal(key, out asset);
+        }
+
+        private static void Clear()
+        {
+            _keys.Clear();
+            _locations.Clear();
+            _assets.Clear();
+            _scenes.Clear();
+        }
+
+        private static List<GameObject> GetInstanceList()
+        {
+            if (_instanceListPool.Count > 0)
+                return _instanceListPool.Dequeue();
+
+            return new List<GameObject>();
+        }
+
+        private static void PoolInstanceList(List<GameObject> list)
+        {
+            list.Clear();
+            _instanceListPool.Enqueue(list);
+        }
+
+        private static string ConvertRuntimeKey(IKeyEvaluator keyEvaluator)
+        {
+            return keyEvaluator.RuntimeKey.ToString();
+        }
+
+        private static bool RuntimeKeyIsValid(string key, bool throwExceptionOnCase = false)
+        {
+            if (!string.IsNullOrEmpty(key)) return true;
+            if (throwExceptionOnCase) throw new InvalidKeyException(key);
+            return false;
+        }
+
+        private static bool RuntimeKeyIsValid(AssetReference reference, out string result,
+            bool throwExceptionOnCase = false)
+        {
+            if (throwExceptionOnCase) _ = reference ?? throw new ArgumentNullException(nameof(reference));
+
+            return !string.IsNullOrEmpty(result = ConvertRuntimeKey(reference));
+        }
+
         private static T GetAssetInternal<T>(string key) where T : Object
         {
             if (!_assets.ContainsKey(key))
@@ -156,24 +181,6 @@ namespace AddressablesMaster
                 Debug.LogWarning(Exceptions.AssetKeyNotInstanceOf<T>(key));
 
             return default;
-        }
-
-        public static bool TryGetAsset<T>(string key, out T asset) where T : Object
-        {
-            asset = default;
-
-            RuntimeKeyIsValid(key, true);
-
-            return TryGetAssetInternal<T>(key, out asset);
-        }
-
-        public static bool TryGetAsset<T>(AssetReference reference, out T asset) where T : Object
-        {
-            asset = default;
-
-            RuntimeKeyIsValid(reference, out var key, true);
-
-            return TryGetAssetInternal<T>(key, out asset);
         }
 
         private static bool TryGetAssetInternal<T>(string key, out T asset) where T : Object
@@ -263,10 +270,7 @@ namespace AddressablesMaster
 
             _instances.Remove(key);
 
-            foreach (var instance in instanceList)
-            {
-                Addressables.ReleaseInstance(instance);
-            }
+            foreach (var instance in instanceList) Addressables.ReleaseInstance(instance);
 
             PoolInstanceList(instanceList);
         }

@@ -12,8 +12,8 @@ namespace AddressablesMaster
     public static partial class ManageAddressables
     {
         private static void OnInitializeCompleted(AsyncOperationHandle<IResourceLocator> handle,
-                                                  Action onSucceeded = null,
-                                                  Action onFailed = null)
+            Action onSucceeded = null,
+            Action onFailed = null)
         {
             if (handle.Status != AsyncOperationStatus.Succeeded)
             {
@@ -26,9 +26,9 @@ namespace AddressablesMaster
         }
 
         private static void OnLoadLocationsCompleted(AsyncOperationHandle<IList<IResourceLocation>> handle,
-                                                     object key,
-                                                     Action<object> onSucceeded = null,
-                                                     Action<object> onFailed = null)
+            object key,
+            Action<object> onSucceeded = null,
+            Action<object> onFailed = null)
         {
             if (handle.Status != AsyncOperationStatus.Succeeded)
             {
@@ -63,10 +63,10 @@ namespace AddressablesMaster
         }
 
         private static void OnLoadAssetCompleted<T>(AsyncOperationHandle<T> handle,
-                                                    string key,
-                                                    bool useReference,
-                                                    Action<string, T> onSucceeded = null,
-                                                    Action<string> onFailed = null)
+            string key,
+            bool useReference,
+            Action<string, T> onSucceeded = null,
+            Action<string> onFailed = null)
             where T : Object
         {
             if (handle.Status != AsyncOperationStatus.Succeeded)
@@ -78,7 +78,9 @@ namespace AddressablesMaster
             if (!handle.Result)
             {
                 if (!SuppressErrorLogs)
-                    Debug.LogError(useReference ? Exceptions.CannotLoadAssetReference<T>(key) : Exceptions.CannotLoadAssetKey<T>(key));
+                    Debug.LogError(useReference
+                        ? Exceptions.CannotLoadAssetReference<T>(key)
+                        : Exceptions.CannotLoadAssetKey<T>(key));
 
                 onFailed?.Invoke(key);
                 return;
@@ -109,10 +111,10 @@ namespace AddressablesMaster
         }
 
         private static void OnInstantiateCompleted(AsyncOperationHandle<GameObject> handle,
-                                                   string key,
-                                                   bool useReference,
-                                                   Action<string, GameObject> onSucceeded = null,
-                                                   Action<string> onFailed = null)
+            string key,
+            bool useReference,
+            Action<string, GameObject> onSucceeded = null,
+            Action<string> onFailed = null)
         {
             if (handle.Status != AsyncOperationStatus.Succeeded)
             {
@@ -142,9 +144,9 @@ namespace AddressablesMaster
         }
 
         private static void OnLoadSceneCompleted(AsyncOperationHandle<SceneInstance> handle,
-                                                 string key,
-                                                 Action<SceneInstance> onSucceeded = null,
-                                                 Action<string> onFailed = null)
+            string key,
+            Action<SceneInstance> onSucceeded = null,
+            Action<string> onFailed = null)
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
@@ -158,18 +160,13 @@ namespace AddressablesMaster
         }
 
         private static void OnUnloadSceneCompleted(AsyncOperationHandle<SceneInstance> handle,
-                                                   string key,
-                                                   Action<string> onSucceeded,
-                                                   Action<string> onFailed)
+            string key,
+            Action<string> onSucceeded,
+            Action<string> onFailed)
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
                 onSucceeded?.Invoke(key);
-            }
-            else if (handle.Status == AsyncOperationStatus.Failed)
-            {
-                onFailed?.Invoke(key);
-            }
+            else if (handle.Status == AsyncOperationStatus.Failed) onFailed?.Invoke(key);
         }
     }
 }

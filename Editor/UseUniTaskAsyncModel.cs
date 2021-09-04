@@ -1,30 +1,32 @@
+#if ADDRESSABLES_UNITASK_FOR_EDITOR
+
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace AddressablesMasterDevelopment.Editor
+namespace AddressablesMaster.Editor
 {
     internal static class UseUniTaskAsyncModel
     {
         private const string uniTaskSymbol = "USE_UNITASK";
 
-    
+
         [MenuItem("Tools/Addressables Master/UniTask/On")]
         internal static void IncludeToSymbols()
         {
             if (DefineActivity())
             {
                 EditorUtility.DisplayDialog("UniTask is supported",
-                    "UniTask is already used", "OK");
+                    "UniTask is already used as the main asynchronous model for asset management", "OK");
             }
             else
             {
                 if (EditorUtility.DisplayDialog("Use UniTask Async Model?",
-                    "If UniTask support is enabled then all asynchronous code will use the UniTask async operations", "Yes", "No"))
-                {
+                    "If UniTask support is enabled then all asynchronous code will use the UniTask async operations",
+                    "Yes", "No"))
                     DefineSymbols(true);
-                }
             }
         }
+
         [MenuItem("Tools/Addressables Master/UniTask/Off")]
         internal static void ExcludeFromSymbols()
         {
@@ -37,29 +39,27 @@ namespace AddressablesMasterDevelopment.Editor
             {
                 if (EditorUtility.DisplayDialog("Disable UniTask support?",
                     "This action will cause the use of the standard .NET async model", "Yes", "No"))
-                {
                     DefineSymbols(false);
-                }
             }
         }
 
         private static bool DefineActivity()
         {
-            BuildTargetGroup currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
-        
-            List<string> scriptingSymbols = 
+            var currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+
+            var scriptingSymbols =
                 new List<string>(PlayerSettings.GetScriptingDefineSymbolsForGroup(currentTarget).Split(';'));
 
             return scriptingSymbols.Contains(uniTaskSymbol);
         }
-        
+
         private static void DefineSymbols(bool state)
         {
-            BuildTargetGroup currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
-        
-            List<string> scriptingSymbols = 
+            var currentTarget = EditorUserBuildSettings.selectedBuildTargetGroup;
+
+            var scriptingSymbols =
                 new List<string>(PlayerSettings.GetScriptingDefineSymbolsForGroup(currentTarget).Split(';'));
-        
+
             if (state)
             {
                 if (!scriptingSymbols.Contains(uniTaskSymbol)) scriptingSymbols.Add(uniTaskSymbol);
@@ -71,8 +71,9 @@ namespace AddressablesMasterDevelopment.Editor
                 else return;
             }
 
-            string finalScriptingSymbols = string.Join(";", scriptingSymbols.ToArray()); 
+            var finalScriptingSymbols = string.Join(";", scriptingSymbols.ToArray());
             PlayerSettings.SetScriptingDefineSymbolsForGroup(currentTarget, finalScriptingSymbols);
         }
     }
 }
+#endif

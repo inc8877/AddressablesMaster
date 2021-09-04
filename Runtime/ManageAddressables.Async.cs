@@ -1,5 +1,4 @@
 ﻿#if !USE_UNITASK
-
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -15,7 +14,8 @@ namespace AddressablesMaster
 {
     public static partial class ManageAddressables
     {
-        public static async Task<OperationResult<IResourceLocator>> InitializeAsync(Action<OperationResult<IResourceLocator>> onCompletion = null)
+        public static async Task<OperationResult<IResourceLocator>> InitializeAsync(Action<OperationResult<IResourceLocator>> onCompletion
+ = null)
         {
             Clear();
 
@@ -38,7 +38,8 @@ namespace AddressablesMaster
             }
         }
 
-        public static async Task<OperationResult<object>> LoadLocationsAsync(object key, Action<OperationResult<object>> onCompletion = null)
+        public static async Task<OperationResult<object>> LoadLocationsAsync(object key, Action<OperationResult<object>> onCompletion
+ = null)
         {
             _ = key ?? throw new InvalidKeyException(key);
             
@@ -49,7 +50,8 @@ namespace AddressablesMaster
 
                 OnLoadLocationsCompleted(operation, key);
                 
-                var operationResult = new OperationResult<object>(operation.Status == AsyncOperationStatus.Succeeded, key);
+                var operationResult =
+ new OperationResult<object>(operation.Status == AsyncOperationStatus.Succeeded, key);
                 
                 onCompletion?.Invoke(operationResult);
                 

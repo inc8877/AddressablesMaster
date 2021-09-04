@@ -233,9 +233,9 @@ namespace AddressablesMaster
         }
 
         public static SceneInstance LoadSceneSync(string key,
-                                                  LoadSceneMode loadMode = LoadSceneMode.Single,
-                                                  bool activateOnLoad = true,
-                                                  int priority = 100)
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -262,9 +262,9 @@ namespace AddressablesMaster
         }
 
         public static bool TryLoadSceneSync(string key, out SceneInstance result,
-                                            LoadSceneMode loadMode = LoadSceneMode.Single,
-                                            bool activateOnLoad = true,
-                                            int priority = 100)
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -292,9 +292,9 @@ namespace AddressablesMaster
         }
 
         public static SceneInstance LoadSceneSync(AssetReference reference,
-                                                  LoadSceneMode loadMode = LoadSceneMode.Single,
-                                                  bool activateOnLoad = true,
-                                                  int priority = 100)
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -321,9 +321,9 @@ namespace AddressablesMaster
         }
 
         public static bool LoadSceneSync(AssetReference reference, out SceneInstance result,
-                                         LoadSceneMode loadMode = LoadSceneMode.Single,
-                                         bool activateOnLoad = true,
-                                         int priority = 100)
+            LoadSceneMode loadMode = LoadSceneMode.Single,
+            bool activateOnLoad = true,
+            int priority = 100)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -352,7 +352,7 @@ namespace AddressablesMaster
 
         [Obsolete]
         public static bool TryLoadSceneSync(string key, LoadSceneMode loadMode, out SceneInstance result,
-                                            bool activateOnLoad = true, int priority = 100)
+            bool activateOnLoad = true, int priority = 100)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -381,7 +381,7 @@ namespace AddressablesMaster
 
         [Obsolete]
         public static bool LoadSceneSync(AssetReference reference, LoadSceneMode loadMode, out SceneInstance result,
-                                         bool activateOnLoad = true, int priority = 100)
+            bool activateOnLoad = true, int priority = 100)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -435,7 +435,7 @@ namespace AddressablesMaster
         }
 
         public static bool TryUnloadSceneSync(string key, out SceneInstance result,
-                                              bool autoReleaseHandle = true)
+            bool autoReleaseHandle = true)
         {
             RuntimeKeyIsValid(key, true);
 
@@ -515,7 +515,7 @@ namespace AddressablesMaster
             }
         }
 
-        public static GameObject InstantiateSync(string key, Transform parent = null, bool inWorldSpace = false, 
+        public static GameObject InstantiateSync(string key, Transform parent = null, bool inWorldSpace = false,
             bool trackHandle = true)
         {
             RuntimeKeyIsValid(key, true);
@@ -534,7 +534,7 @@ namespace AddressablesMaster
             }
         }
 
-        public static bool TryInstantiateSync(string key, out GameObject result, Transform parent = null, 
+        public static bool TryInstantiateSync(string key, out GameObject result, Transform parent = null,
             bool inWorldSpace = false, bool trackHandle = true)
         {
             RuntimeKeyIsValid(key, true);
@@ -553,7 +553,7 @@ namespace AddressablesMaster
             }
         }
 
-        public static GameObject InstantiateSync(AssetReference reference, Transform parent = null, 
+        public static GameObject InstantiateSync(AssetReference reference, Transform parent = null,
             bool inWorldSpace = false)
         {
             RuntimeKeyIsValid(reference, out var key, true);
@@ -571,10 +571,11 @@ namespace AddressablesMaster
                 throw e;
             }
         }
-        
+
         /// <summary>
-        /// Instantiates game object on the scene synchronously and adds a trigger to the instance that
-        /// releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle"/> when the instance is destroyed.
+        ///     Instantiates game object on the scene synchronously and adds a trigger to the instance that
+        ///     releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle" /> when the instance is
+        ///     destroyed.
         /// </summary>
         /// <returns>Instantiated game object on the scene.</returns>
         public static GameObject InstantiateSyncWithAutoRelease(string key, Transform parent = null,
@@ -585,10 +586,11 @@ namespace AddressablesMaster
             AddAutoReleaseAssetTrigger(key, tempGO);
             return tempGO;
         }
-        
+
         /// <summary>
-        /// Instantiates game object on the scene synchronously and adds a trigger to the instance that
-        /// releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle"/> when the instance is destroyed.
+        ///     Instantiates game object on the scene synchronously and adds a trigger to the instance that
+        ///     releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle" /> when the instance is
+        ///     destroyed.
         /// </summary>
         /// <returns>Instantiated game object on the scene.</returns>
         public static GameObject InstantiateSyncWithAutoRelease(AssetReference assetReference,
@@ -602,8 +604,8 @@ namespace AddressablesMaster
         }
 
         public static bool TryInstantiateSync(AssetReference reference, out GameObject result,
-                                              Transform parent = null,
-                                              bool inWorldSpace = false)
+            Transform parent = null,
+            bool inWorldSpace = false)
         {
             RuntimeKeyIsValid(reference, out var key, true);
 
@@ -620,7 +622,7 @@ namespace AddressablesMaster
                 throw e;
             }
         }
-        
+
         private static void ActivateSceneSync(in SceneInstance instance, int priority)
         {
             var operation = instance.ActivateAsync();
@@ -629,7 +631,7 @@ namespace AddressablesMaster
         }
     }
 
-    internal static partial class AsyncOperationExtensions
+    internal static class AsyncOperationExtensions
     {
         public static void WaitForCompletion(this AsyncOperation operation)
         {
@@ -650,16 +652,18 @@ namespace AddressablesMaster
         {
             get
             {
-                if (this.operation == null)
+                if (operation == null)
                     return true;
 
-                return this.operation.isDone;
+                return operation.isDone;
             }
         }
 
         public void WaitForCompletion()
         {
-            while (!this.IsCompleted) { }
+            while (!IsCompleted)
+            {
+            }
         }
     }
 }
