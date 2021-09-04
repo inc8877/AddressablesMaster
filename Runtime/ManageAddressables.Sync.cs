@@ -631,7 +631,7 @@ namespace AddressablesMaster
         }
     }
 
-    internal static class AsyncOperationExtensions
+    internal static partial class AsyncOperationExtensions
     {
         public static void WaitForCompletion(this AsyncOperation operation)
         {
