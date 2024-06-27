@@ -552,6 +552,24 @@ namespace AddressablesMaster
                 throw e;
             }
         }
+        
+        public static GameObject InstantiateSync(AssetReference reference, Vector3 position, Quaternion rotation, Transform parent = null)
+        {
+            RuntimeKeyIsValid(reference, out var key, true);
+
+            try
+            {
+                var operation = reference.InstantiateAsync(position, rotation, parent);
+                var result = operation.WaitForCompletion();
+                OnInstantiateCompleted(operation, key, true);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
         public static GameObject InstantiateSync(AssetReference reference, Transform parent = null,
             bool inWorldSpace = false)
