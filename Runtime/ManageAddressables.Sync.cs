@@ -589,6 +589,20 @@ namespace AddressablesMaster
                 throw e;
             }
         }
+        
+        /// <summary>
+        ///     Instantiates game object on the scene synchronously and adds a trigger to the instance that
+        ///     releases <see cref="UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle" /> when the instance is
+        ///     destroyed.
+        /// </summary>
+        /// <returns>Instantiated game object on the scene.</returns>
+        public static GameObject InstantiateSyncWithAutoRelease(AssetReference assetReference, Vector3 position, Quaternion rotation, Transform parent = null)
+        {
+            var tempGO = InstantiateSync(assetReference, position, rotation, parent);
+
+            AddAutoReleaseAssetTrigger(assetReference, tempGO);
+            return tempGO;
+        }
 
         /// <summary>
         ///     Instantiates game object on the scene synchronously and adds a trigger to the instance that
