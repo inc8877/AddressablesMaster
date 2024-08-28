@@ -1,5 +1,12 @@
 # Changelog
 
+# v1.0.2
+
+### Added
+
+- sync instantiate with spawn position and rotation args
+- sync instantiate with auto release with position and rotation args
+
 # v1.0.1
 
 ### Fixed
