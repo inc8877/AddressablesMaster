@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace AddressablesMaster
 {
+    [DisallowMultipleComponent]
     public class ReleaseHandleOnDestroy : MonoBehaviour
     {
         public void OnDestroy()
