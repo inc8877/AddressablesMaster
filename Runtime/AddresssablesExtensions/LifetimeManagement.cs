@@ -61,7 +61,7 @@ namespace UnityEngine.AddressableAssets
         {
             _ = targetGO ?? throw new ArgumentNullException(nameof(targetGO));
 
-            var trigger = targetGO.AddComponent<ReleaseHandleOnDestroy>();
+            var trigger = targetGO.GetComponent<ReleaseHandleOnDestroy>() ?? targetGO.AddComponent<ReleaseHandleOnDestroy>();
 
             trigger.OnDestroyEvent += () => Addressables.Release(operationHandle);
 

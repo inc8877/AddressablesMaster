@@ -236,7 +236,7 @@ namespace AddressablesMaster
         /// <param name="targetGO">The object to which the trigger will be attached.</param>
         public static void AddAutoReleaseAssetTrigger(string key, GameObject targetGO)
         {
-            targetGO.AddComponent<ReleaseHandleOnDestroy>().OnDestroyEvent +=
+            (targetGO.GetComponent<ReleaseHandleOnDestroy>() ?? targetGO.AddComponent<ReleaseHandleOnDestroy>()).OnDestroyEvent +=
                 () => ReleaseAsset(key);
         }
 
@@ -248,7 +248,7 @@ namespace AddressablesMaster
         /// <param name="targetGO">The object to which the trigger will be attached.</param>
         public static void AddAutoReleaseAssetTrigger(AssetReference assetReference, GameObject targetGO)
         {
-            targetGO.AddComponent<ReleaseHandleOnDestroy>().OnDestroyEvent +=
+            (targetGO.GetComponent<ReleaseHandleOnDestroy>() ?? targetGO.AddComponent<ReleaseHandleOnDestroy>()).OnDestroyEvent +=
                 () => ReleaseAsset(assetReference);
         }
 
@@ -261,7 +261,7 @@ namespace AddressablesMaster
         /// <param name="targetGO">The object to which the trigger will be attached.</param>
         public static void AddAutoReleaseInstanceTrigger(string key, GameObject targetGO)
         {
-            targetGO.AddComponent<ReleaseHandleOnDestroy>().OnDestroyEvent +=
+            (targetGO.GetComponent<ReleaseHandleOnDestroy>() ?? targetGO.AddComponent<ReleaseHandleOnDestroy>()).OnDestroyEvent +=
                 () => ReleaseInstance(key, targetGO);
         }
 
@@ -274,7 +274,7 @@ namespace AddressablesMaster
         /// <param name="targetGO">The object to which the trigger will be attached.</param>
         public static void AddAutoReleaseInstanceTrigger(AssetReference assetReference, GameObject targetGO)
         {
-            targetGO.AddComponent<ReleaseHandleOnDestroy>().OnDestroyEvent +=
+            (targetGO.GetComponent<ReleaseHandleOnDestroy>() ?? targetGO.AddComponent<ReleaseHandleOnDestroy>()).OnDestroyEvent +=
                 () => ReleaseInstance(assetReference, targetGO);
         }
     }
