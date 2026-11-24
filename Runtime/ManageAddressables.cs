@@ -302,7 +302,7 @@ namespace AddressablesMaster
                 return;
             }
 
-            var index = instanceList.FindIndex(x => x.GetInstanceID() == instance.GetInstanceID());
+            var index = instanceList.FindIndex(x => x == instance);
 
             if (index < 0)
             {
